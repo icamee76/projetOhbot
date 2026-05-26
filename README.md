@@ -8,6 +8,11 @@ Une API moderne et une superbe interface web "premium" pour contrôler la tête 
 
 Ce projet a été conçu pour tourner de manière optimale sur un **Raspberry Pi** (ou n'importe quel ordinateur, comme un Mac) pour piloter l'Ohbot en réseau local via des requêtes HTTP simples.
 
+> **Aperçu de l'interface web (Control Center)**
+> 
+> ![Interface Web Ohbot Control Center](screenshot.png)
+> *(Note: N'oubliez pas d'ajouter votre propre capture d'écran nommée `screenshot.png` à la racine de votre projet !)*
+
 ## ✨ Fonctionnalités
 
 - 🌐 **Interface Web Intuitive** : Un panneau de contrôle au design *glassmorphism* accessible depuis n'importe quel navigateur.
@@ -64,3 +69,42 @@ safetext = re.sub(r'[^ .a-zA-ZÀ-ÿ0-9?\']+', '', text)
 ## 🔧 Architecture de la Configuration (`config.json`)
 
 Le fichier `config.json` définit tous les moteurs, leurs noms internes (clés d'URL), et surtout leurs limites (0 à 10) pour éviter la casse matérielle. Si vous modifiez ce fichier via l'interface web, les changements de limites sont pris en compte instantanément par l'API sans nécessiter de redémarrage !
+
+---
+
+## 📖 Documentation de l'API
+
+L'API est documentée automatiquement et testable via l'interface Swagger sur `/docs`, mais voici les routes principales si vous souhaitez intégrer Ohbot dans vos propres scripts (Python, Node.js, cURL...) :
+
+### 1. Synthèse Vocale
+Fait parler le robot. Le mouvement des lèvres se synchronise automatiquement avec le son généré par la synthèse vocale.
+**`POST /say`**
+```json
+{
+  "text": "Bonjour, je suis prêt !"
+}
+```
+*Exemple cURL :*
+```bash
+curl -X 'POST' 'http://127.0.0.1:8000/say' -H 'Content-Type: application/json' -d '{"text": "Hello world"}'
+```
+
+### 2. Mouvement des Moteurs
+Bouge un moteur spécifique à une position donnée. 
+- `{motor_key}` : L'identifiant textuel du moteur (ex: `head_nod`, `head_turn`, `top_lip`, etc. défini dans `config.json`).
+- `{position}` : Valeur entière (généralement entre `0` et `10`).
+**`POST /move/{motor_key}/{position}`**
+*Exemple cURL :*
+```bash
+curl -X 'POST' 'http://127.0.0.1:8000/move/head_turn/8'
+```
+*(Sécurité : Si la position demandée dépasse les limites fixées dans la configuration, l'API renverra une erreur HTTP 400 Bad Request et protègera le moteur physique).*
+
+### 3. Gestion de la Configuration
+Récupérer ou mettre à jour les limites des moteurs à la volée.
+- **`GET /config`** : Retourne le JSON complet contenant tous les moteurs et leurs limites actuelles.
+- **`POST /config`** : Écrase la configuration actuelle (en mémoire et sur le disque) avec un nouveau JSON.
+
+### 4. Fonctions d'urgence
+- **`POST /reset`** : Remet tous les moteurs dans leur position neutre (généralement au centre, valeur 5).
+- **`POST /shutdown`** : Désactive tous les servomoteurs (les relâche) et ferme proprement la connexion avec la carte. Utile à la fin de l'utilisation.
