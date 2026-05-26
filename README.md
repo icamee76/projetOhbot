@@ -11,7 +11,7 @@ Ce projet a été conçu pour tourner de manière optimale sur un **Raspberry Pi
 > **Aperçu de l'interface web (Control Center)**
 > 
 > ![Interface Web Ohbot Control Center](screenshot.png)
-> *(Note: N'oubliez pas d'ajouter votre propre capture d'écran nommée `screenshot.png` à la racine de votre projet !)*
+
 
 ## ✨ Fonctionnalités
 
