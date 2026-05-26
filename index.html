@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ohbot Control Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --surface: rgba(30, 41, 59, 0.7);
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #1e1b4b, var(--bg-color));
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeIn 1s ease-out;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .glass-panel {
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .glass-panel:hover {
+            transform: translateY(-2px);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .btn-danger {
+            background: transparent;
+            border: 1px solid #ef4444;
+            color: #ef4444;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Form Controls */
+        .input-group {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Sliders */
+        .slider-container {
+            margin-bottom: 1.5rem;
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Status Toast */
+        #status {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 2rem;
+            background: #10b981;
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        #status.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #status.error {
+            background: #ef4444;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .motors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Ohbot Control Center</h1>
+            <p class="subtitle">Interface de contrôle API en temps réel</p>
+            <div class="action-buttons" style="justify-content: center; margin-top: 1.5rem;">
+                <a href="/docs" target="_blank" class="btn btn-outline">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Documentation API (Swagger)
+                </a>
+            </div>
+        </header>
+
+        <div class="glass-panel">
+            <h2>Synthèse Vocale</h2>
+            <div class="input-group">
+                <input type="text" id="speakText" placeholder="Entrez une phrase pour Ohbot..." value="Bonjour, l'interface web est prête à fonctionner.">
+                <button class="btn" onclick="sayText()">Faire Parler</button>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>
+                Contrôle des Moteurs
+                <div class="action-buttons">
+                    <button class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="resetRobot()">Position Neutre</button>
+                    <button class="btn btn-danger" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="shutdownRobot()">Désactiver</button>
+                </div>
+            </h2>
+            <div id="motors-container" class="motors-grid">
+                <p style="color: var(--text-muted)">Chargement de la configuration depuis l'API...</p>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>Éditeur de Configuration JSON</h2>
+            <p class="subtitle" style="font-size: 0.9rem; margin-top: -1rem; margin-bottom: 1rem;">Modifiez les limites (min/max) et sauvegardez. Les changements sont appliqués instantanément.</p>
+            <textarea id="configEditor" style="width: 100%; height: 250px; background: rgba(15,23,42,0.6); color: #a78bfa; font-family: monospace; font-size: 1rem; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; resize: vertical; box-sizing: border-box;"></textarea>
+            <button class="btn" style="margin-top: 1rem;" onclick="saveConfig()">Sauvegarder les modifications</button>
+        </div>
+    </div>
+
+    <div id="status">Action réussie !</div>
+
+    <script>
+        const API_URL = window.location.origin;
+
+        function showStatus(message, isError = false) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = isError ? 'show error' : 'show';
+            setTimeout(() => statusEl.className = '', 3000);
+        }
+
+        async function sayText() {
+            const text = document.getElementById('speakText').value;
+            if (!text) return;
+            
+            try {
+                const res = await fetch(`${API_URL}/say`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ text })
+                });
+                if (res.ok) {
+                    showStatus('Ohbot parle...');
+                } else {
+                    const data = await res.json();
+                    showStatus(data.detail || 'Erreur API', true);
+                }
+            } catch (e) {
+                showStatus('Erreur de connexion à l\'API', true);
+            }
+        }
+
+        async function moveMotor(motorId, position) {
+            try {
+                document.getElementById(`val-${motorId}`).textContent = position;
+                
+                const res = await fetch(`${API_URL}/move/${motorId}/${position}`, {
+                    method: 'POST'
+                });
+                
+                if (!res.ok) {
+                    const data = await res.json();
+                    showStatus(data.detail || 'Mouvement refusé', true);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function resetRobot() {
+            try {
+                const res = await fetch(`${API_URL}/reset`, { method: 'POST' });
+                if (res.ok) {
+                    showStatus('Robot réinitialisé');
+                    loadConfig(); // Recharge les valeurs des sliders au centre
+                }
+            } catch (e) {
+                showStatus('Erreur API', true);
+            }
+        }
+
+        async function shutdownRobot() {
+            if(confirm("Voulez-vous vraiment éteindre les moteurs ?")) {
+                try {
+                    const res = await fetch(`${API_URL}/shutdown`, { method: 'POST' });
+                    if (res.ok) showStatus('Moteurs désactivés');
+                } catch (e) {
+                    showStatus('Erreur API', true);
+                }
+            }
+        }
+
+        async function loadConfig() {
+            try {
+                const res = await fetch(`${API_URL}/config`);
+                const config = await res.json();
+                
+                // Mettre à jour l'éditeur JSON
+                document.getElementById('configEditor').value = JSON.stringify(config, null, 2);
+
+                const container = document.getElementById('motors-container');
+                container.innerHTML = '';
+
+                const motors = config.motors;
+                for (const [id, info] of Object.entries(motors)) {
+                    // Calcul de la valeur par défaut (souvent 5, ou la moyenne)
+                    const centerVal = Math.round((info.max + info.min) / 2);
+                    
+                    const div = document.createElement('div');
+                    div.className = 'slider-container';
+                    div.innerHTML = `
+                        <div class="slider-header">
+                            <strong>${info.name}</strong>
+                            <span id="val-${id}" style="color: var(--primary); font-weight: bold;">${centerVal}</span>
+                        </div>
+                        <input type="range" 
+                               min="${info.min}" 
+                               max="${info.max}" 
+                               value="${centerVal}" 
+                               oninput="document.getElementById('val-${id}').textContent = this.value"
+                               onchange="moveMotor('${id}', this.value)">
+                        <div class="slider-header" style="margin-top: 8px; color: #64748b; font-size: 0.8rem;">
+                            <span>Min: ${info.min}</span>
+                            <span>Max: ${info.max}</span>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                }
+            } catch (e) {
+                document.getElementById('motors-container').innerHTML = 
+                    '<p style="color: #ef4444">Impossible de contacter l\'API. Assurez-vous que le serveur est lancé (uvicorn main:app).</p>';
+            }
+        }
+
+        async function saveConfig() {
+            const rawText = document.getElementById('configEditor').value;
+            let newConfig;
+            try {
+                newConfig = JSON.parse(rawText);
+            } catch (e) {
+                showStatus('Erreur: Le JSON est invalide', true);
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newConfig)
+                });
+                
+                if (res.ok) {
+                    showStatus('Configuration sauvegardée avec succès !');
+                    loadConfig(); // Rafraîchit les sliders avec les nouvelles valeurs Min/Max
+                } else {
+                    const data = await res.json();
+                    showStatus(data.detail || 'Erreur API', true);
+                }
+            } catch (e) {
+                showStatus('Erreur de connexion à l\'API', true);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadConfig);
+    </script>
+</body>
+</html>

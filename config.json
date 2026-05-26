@@ -1,0 +1,46 @@
+{
+  "motors": {
+    "head_nod": {
+      "id": 0,
+      "name": "Inclinaison Tête",
+      "min": 3,
+      "max": 8
+    },
+    "head_turn": {
+      "id": 1,
+      "name": "Rotation Tête",
+      "min": 1,
+      "max": 9
+    },
+    "eye_turn": {
+      "id": 2,
+      "name": "Rotation Yeux",
+      "min": 0,
+      "max": 10
+    },
+    "lid_blink": {
+      "id": 3,
+      "name": "Paupières",
+      "min": 0,
+      "max": 10
+    },
+    "top_lip": {
+      "id": 4,
+      "name": "Lèvre Supérieure",
+      "min": 5,
+      "max": 8
+    },
+    "bottom_lip": {
+      "id": 5,
+      "name": "Lèvre Inférieure",
+      "min": 4,
+      "max": 8
+    },
+    "eye_tilt": {
+      "id": 6,
+      "name": "Inclinaison Yeux",
+      "min": 0,
+      "max": 10
+    }
+  }
+}
