@@ -1,0 +1,66 @@
+{
+  "autonomous": {
+    "enabled": true,
+    "speak_interval_sec": 60,
+    "quiet_mode": false,
+    "hourly_chime": true,
+    "enabled_sources": [
+      "phrases",
+      "jokes",
+      "haikus",
+      "news",
+      "reddit",
+      "weather"
+    ]
+  },
+  "schedule": {
+    "enabled": false,
+    "wake_time": "08:30",
+    "sleep_time": "19:00",
+    "days": [0, 1, 2, 3, 4]
+  },
+  "weather": {
+    "city": "Paris",
+    "latitude": 48.8566,
+    "longitude": 2.3522
+  },
+  "news_feeds": [
+    {
+      "name": "Franceinfo - À la une",
+      "url": "https://www.francetvinfo.fr/titres.rss"
+    },
+    {
+      "name": "Le Monde - Une",
+      "url": "https://www.lemonde.fr/rss/une.xml"
+    },
+    {
+      "name": "Numerama - Tech",
+      "url": "https://www.numerama.com/feed/"
+    }
+  ],
+  "subreddits": [
+    "PasDeQuestionIdiote",
+    "france",
+    "science"
+  ],
+  "phrases": [
+    "Bonjour ! Tout va bien par ici.",
+    "Je garde un œil attentif sur la pièce.",
+    "N'hésitez pas à venir discuter avec moi.",
+    "Quelqu'un a pensé à faire une petite pause café ?",
+    "Tout est calme et sous contrôle."
+  ],
+  "jokes": [
+    "Pourquoi les plongeurs plongent-ils toujours en arrière et jamais en avant ? Parce que sinon ils tombent dans le bateau.",
+    "Que dit une imprimante dans l'eau ? J'ai papier !",
+    "Pourquoi les robots ne prennent jamais de vacances ? Parce qu'ils ont juste besoin de recharger leurs batteries.",
+    "Quel est le comble pour un électricien ? De ne pas être au courant.",
+    "Que fait une fraise sur un cheval ? Tagada, tagada !"
+  ],
+  "haikus": [
+    "Un éclair d'azur, mes moteurs s'ouvrent doucement, le matin sourit.",
+    "Goutte de rosée, sur le fil silencieux, l'heure s'étire en paix.",
+    "Lumière d'automne, un regard posé au loin, le vent fait danser.",
+    "Sous le ciel étoilé, les circuits rêvent tout bas, silence apaisé."
+  ]
+}

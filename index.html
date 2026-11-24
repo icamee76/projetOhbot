@@ -8,14 +8,21 @@
     <style>
         :root {
             --bg-color: #0f172a;
-            --surface: rgba(30, 41, 59, 0.7);
+            --surface: rgba(30, 41, 59, 0.72);
+            --surface-dark: rgba(15, 23, 42, 0.65);
             --primary: #3b82f6;
             --primary-hover: #2563eb;
+            --accent: #a78bfa;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border: rgba(255, 255, 255, 0.1);
         }
-        
+
+        * { box-sizing: border-box; }
+
         body {
             margin: 0;
             padding: 0;
@@ -26,227 +33,600 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1080px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 2rem 1.5rem 4rem;
         }
 
         header {
             text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeIn 1s ease-out;
+            margin-bottom: 1.75rem;
+            animation: fadeIn 0.6s ease-out;
         }
 
         h1 {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: 800;
             background: linear-gradient(to right, #60a5fa, #a78bfa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.5rem;
+            margin: 0 0 0.4rem;
         }
 
         p.subtitle {
             color: var(--text-muted);
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            margin: 0;
         }
+
+        /* Live Status Bar */
+        .status-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 0.9rem 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.35rem 0.8rem;
+            border-radius: 999px;
+            font-size: 0.88rem;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+
+        .dot.off { background: var(--danger); }
+        .dot.sleep { background: var(--warning); }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .tab-btn {
+            background: var(--surface);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 0.7rem 1.25rem;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 0.98rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover { color: var(--text-main); border-color: rgba(255,255,255,0.25); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), #6366f1);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.35);
+        }
+
+        .tab-pane { display: none; animation: fadeIn 0.25s ease-out; }
+        .tab-pane.active { display: block; }
 
         .glass-panel {
             background: var(--surface);
             backdrop-filter: blur(12px);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease;
-        }
-
-        .glass-panel:hover {
-            transform: translateY(-2px);
+            padding: 1.6rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
         }
 
         h2 {
-            font-size: 1.5rem;
-            margin-top: 0;
-            margin-bottom: 1.5rem;
+            font-size: 1.35rem;
+            margin: 0 0 1.2rem;
             border-bottom: 1px solid var(--border);
-            padding-bottom: 0.5rem;
+            padding-bottom: 0.6rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.05rem;
+            margin: 0 0 0.75rem;
+            color: #cbd5e1;
         }
 
         .btn {
             background: var(--primary);
             color: white;
             border: none;
-            padding: 0.75rem 1.5rem;
+            padding: 0.65rem 1.2rem;
             border-radius: 8px;
-            font-size: 1rem;
+            font-family: inherit;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             text-decoration: none;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
         }
 
-        .btn:hover {
-            background: var(--primary-hover);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        .btn:hover { background: var(--primary-hover); box-shadow: 0 0 14px rgba(59,130,246,0.45); }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: #60a5fa; }
+        .btn-outline:hover { background: rgba(59, 130, 246, 0.14); }
+        .btn-danger { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
+        .btn-danger:hover { background: rgba(239, 68, 68, 0.14); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-success:hover { background: #059669; }
+
+        /* Grids */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+            gap: 0.85rem;
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 1px solid var(--primary);
-            color: var(--primary);
+        .attitude-card {
+            background: var(--surface-dark);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .btn-outline:hover {
-            background: rgba(59, 130, 246, 0.1);
+        .attitude-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            background: rgba(59, 130, 246, 0.12);
         }
 
-        .btn-danger {
-            background: transparent;
-            border: 1px solid #ef4444;
-            color: #ef4444;
+        .attitude-emoji { font-size: 2rem; display: block; margin-bottom: 0.35rem; }
+        .attitude-title { font-weight: 600; font-size: 0.98rem; }
+        .attitude-desc { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+        .motors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 1rem;
         }
 
-        .btn-danger:hover {
-            background: rgba(239, 68, 68, 0.1);
+        .two-col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
 
-        /* Form Controls */
+        /* Inputs & Lists */
         .input-group {
             display: flex;
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 0.75rem;
+            margin-bottom: 0.85rem;
+            flex-wrap: wrap;
         }
 
-        input[type="text"] {
+        input[type="text"], input[type="number"], input[type="time"], textarea {
             flex: 1;
-            background: rgba(15, 23, 42, 0.6);
+            min-width: 140px;
+            background: var(--surface-dark);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 0.75rem 1rem;
+            padding: 0.65rem 0.9rem;
             color: white;
             font-family: inherit;
-            font-size: 1rem;
-        }
-        
-        input[type="text"]:focus {
-            outline: none;
-            border-color: var(--primary);
+            font-size: 0.95rem;
         }
 
-        /* Sliders */
-        .slider-container {
-            margin-bottom: 1.5rem;
-            background: rgba(0,0,0,0.2);
-            padding: 1rem;
+        input:focus, textarea:focus { outline: none; border-color: var(--primary); }
+
+        .item-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1rem;
+            max-height: 240px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--surface-dark);
+            border: 1px solid var(--border);
             border-radius: 8px;
+            padding: 0.55rem 0.85rem;
+            font-size: 0.9rem;
+        }
+
+        .chip-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface-dark);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 0.4rem 0.9rem;
+            font-size: 0.88rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .chip input { accent-color: var(--primary); cursor: pointer; }
+
+        .slider-container {
+            background: rgba(0,0,0,0.22);
+            padding: 0.9rem 1rem;
+            border-radius: 10px;
         }
 
         .slider-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.45rem;
             font-size: 0.9rem;
             color: var(--text-muted);
         }
 
-        input[type="range"] {
-            width: 100%;
-            accent-color: var(--primary);
-            cursor: pointer;
-        }
+        input[type="range"] { width: 100%; accent-color: var(--primary); cursor: pointer; }
 
-        /* Status Toast */
+        .action-buttons { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+
         #status {
             position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            padding: 1rem 2rem;
-            background: #10b981;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            padding: 0.85rem 1.5rem;
+            background: var(--success);
             color: white;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 600;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
             opacity: 0;
             transform: translateY(20px);
-            transition: all 0.3s;
+            transition: all 0.25s;
             pointer-events: none;
             z-index: 1000;
         }
-        
-        #status.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
 
-        #status.error {
-            background: #ef4444;
-        }
+        #status.show { opacity: 1; transform: translateY(0); }
+        #status.error { background: var(--danger); }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        .motors-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1rem;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 10px;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <header>
             <h1>Ohbot Control Center</h1>
-            <p class="subtitle">Interface de contrôle API en temps réel</p>
-            <div class="action-buttons" style="justify-content: center; margin-top: 1.5rem;">
-                <a href="/docs" target="_blank" class="btn btn-outline">
-                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    Documentation API (Swagger)
-                </a>
-            </div>
+            <p class="subtitle">Scénarios autonomes, attitudes, flux live & pilotage moteur</p>
         </header>
 
-        <div class="glass-panel">
-            <h2>Synthèse Vocale</h2>
-            <div class="input-group">
-                <input type="text" id="speakText" placeholder="Entrez une phrase pour Ohbot..." value="Bonjour, l'interface web est prête à fonctionner.">
-                <button class="btn" onclick="sayText()">Faire Parler</button>
+        <!-- Barre d'état temps réel -->
+        <div class="status-bar">
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
+                <span class="badge" id="usbBadge"><span class="dot" id="usbDot"></span><span id="usbText">USB...</span></span>
+                <span class="badge"><span class="dot" id="stateDot"></span><span id="activityText">Chargement...</span></span>
+                <span style="font-size: 0.88rem; color: var(--text-muted);" id="lastSpokenText"></span>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-outline btn-sm" onclick="reconnectUsb()">Reconnecter USB</button>
+                <a href="/docs" target="_blank" class="btn btn-outline btn-sm">Swagger API</a>
             </div>
         </div>
 
-        <div class="glass-panel">
-            <h2>
-                Contrôle des Moteurs
-                <div class="action-buttons">
-                    <button class="btn btn-outline" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="resetRobot()">Position Neutre</button>
-                    <button class="btn btn-danger" style="font-size: 0.85rem; padding: 0.5rem 1rem;" onclick="shutdownRobot()">Désactiver</button>
+        <!-- Onglets -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('vie', this)">🎭 Vie & Attitudes</button>
+            <button class="tab-btn" onclick="switchTab('contenus', this)">📚 Blagues, Haïkus & Flux</button>
+            <button class="tab-btn" onclick="switchTab('planning', this)">⏰ Planning & Siestes</button>
+            <button class="tab-btn" onclick="switchTab('manuel', this)">🎛️ Pilotage Manuel & Config</button>
+        </div>
+
+        <!-- ONGLET 1 : VIE & ATTITUDES -->
+        <div id="tab-vie" class="tab-pane active">
+            <div class="glass-panel">
+                <h2>
+                    <span>Mode Vie Autonome</span>
+                    <button id="toggleAutoBtn" class="btn btn-success btn-sm" onclick="toggleAutonomous()">Actif</button>
+                </h2>
+                <div class="two-col" style="margin-bottom: 1rem;">
+                    <div class="slider-container">
+                        <div class="slider-header">
+                            <strong>Intervalle moyen de parole</strong>
+                            <span style="color: var(--primary); font-weight: bold;"><span id="val-speak-interval">60</span> s</span>
+                        </div>
+                        <input type="range" id="speakIntervalSlider" min="20" max="300" step="5" value="60"
+                               oninput="document.getElementById('val-speak-interval').textContent = this.value"
+                               onchange="saveScenarios()">
+                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: center; gap: 0.6rem;">
+                        <label class="chip">
+                            <input type="checkbox" id="quietModeCheck" onchange="saveScenarios()">
+                            Mode silencieux (mouvements seuls, sans parler)
+                        </label>
+                        <label class="chip">
+                            <input type="checkbox" id="hourlyChimeCheck" onchange="saveScenarios()">
+                            Carillon parlant à chaque heure pleine (ex: 12h « Bon appétit »)
+                        </label>
+                    </div>
                 </div>
-            </h2>
-            <div id="motors-container" class="motors-grid">
-                <p style="color: var(--text-muted)">Chargement de la configuration depuis l'API...</p>
+                <h3>Sources autorisées en mode autonome :</h3>
+                <div class="chip-group" id="enabledSourcesGroup">
+                    <label class="chip"><input type="checkbox" value="phrases" onchange="saveScenarios()"> 💬 Phrases d'ambiance</label>
+                    <label class="chip"><input type="checkbox" value="jokes" onchange="saveScenarios()"> 😂 Blagues</label>
+                    <label class="chip"><input type="checkbox" value="haikus" onchange="saveScenarios()"> 🌸 Haïkus</label>
+                    <label class="chip"><input type="checkbox" value="news" onchange="saveScenarios()"> 📰 Actualités RSS</label>
+                    <label class="chip"><input type="checkbox" value="reddit" onchange="saveScenarios()"> 👽 Reddit</label>
+                    <label class="chip"><input type="checkbox" value="weather" onchange="saveScenarios()"> 🌤️ Météo</label>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h2>Attitudes Expressives (1 clic)</h2>
+                <div class="cards-grid">
+                    <div class="attitude-card" onclick="triggerAttitude('happy')">
+                        <span class="attitude-emoji">😊</span>
+                        <div class="attitude-title">Joyeux</div>
+                        <div class="attitude-desc">Yeux verts & hochements</div>
+                    </div>
+                    <div class="attitude-card" onclick="triggerAttitude('curious')">
+                        <span class="attitude-emoji">🤔</span>
+                        <div class="attitude-title">Curieux</div>
+                        <div class="attitude-desc">Scrute la pièce</div>
+                    </div>
+                    <div class="attitude-card" onclick="triggerAttitude('grumpy')">
+                        <span class="attitude-emoji">😠</span>
+                        <div class="attitude-title">Grognon</div>
+                        <div class="attitude-desc">Yeux rouges & râle</div>
+                    </div>
+                    <div class="attitude-card" onclick="triggerAttitude('zen')">
+                        <span class="attitude-emoji">🧘</span>
+                        <div class="attitude-title">Zen</div>
+                        <div class="attitude-desc">Calme + Haïku</div>
+                    </div>
+                    <div class="attitude-card" onclick="triggerAttitude('party')">
+                        <span class="attitude-emoji">🎉</span>
+                        <div class="attitude-title">Fête</div>
+                        <div class="attitude-desc">Show arc-en-ciel</div>
+                    </div>
+                    <div class="attitude-card" onclick="wakeRobot()">
+                        <span class="attitude-emoji">☀️</span>
+                        <div class="attitude-title">Réveiller</div>
+                        <div class="attitude-desc">Sort de veille / sieste</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h2>Déclencher une intervention immédiate</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-outline" onclick="triggerContent('jokes')">😂 Raconter une blague</button>
+                    <button class="btn btn-outline" onclick="triggerContent('haikus')">🌸 Réciter un haïku</button>
+                    <button class="btn btn-outline" onclick="triggerContent('news')">📰 Lire une actu (RSS)</button>
+                    <button class="btn btn-outline" onclick="triggerContent('reddit')">👽 Lire un post Reddit</button>
+                    <button class="btn btn-outline" onclick="triggerContent('weather')">🌤️ Annoncer la météo</button>
+                    <button class="btn btn-outline" onclick="triggerContent('phrases')">💬 Phrase spontanée</button>
+                </div>
             </div>
         </div>
 
-        <div class="glass-panel">
-            <h2>Éditeur de Configuration JSON</h2>
-            <p class="subtitle" style="font-size: 0.9rem; margin-top: -1rem; margin-bottom: 1rem;">Modifiez les limites (min/max) et sauvegardez. Les changements sont appliqués instantanément.</p>
-            <textarea id="configEditor" style="width: 100%; height: 250px; background: rgba(15,23,42,0.6); color: #a78bfa; font-family: monospace; font-size: 1rem; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; resize: vertical; box-sizing: border-box;"></textarea>
-            <button class="btn" style="margin-top: 1rem;" onclick="saveConfig()">Sauvegarder les modifications</button>
+        <!-- ONGLET 2 : CONTENUS & FLUX -->
+        <div id="tab-contenus" class="tab-pane">
+            <div class="two-col">
+                <div class="glass-panel">
+                    <h2>😂 Blagues <button class="btn btn-outline btn-sm" onclick="triggerContent('jokes')">Tester</button></h2>
+                    <ul id="jokesList" class="item-list"></ul>
+                    <div class="input-group">
+                        <input type="text" id="newJokeInput" placeholder="Ajouter une blague...">
+                        <button class="btn btn-sm" onclick="addListItem('jokes', 'newJokeInput')">Ajouter</button>
+                    </div>
+                </div>
+
+                <div class="glass-panel">
+                    <h2>🌸 Haïkus <button class="btn btn-outline btn-sm" onclick="triggerContent('haikus')">Tester</button></h2>
+                    <ul id="haikusList" class="item-list"></ul>
+                    <div class="input-group">
+                        <input type="text" id="newHaikuInput" placeholder="Ajouter un haïku...">
+                        <button class="btn btn-sm" onclick="addListItem('haikus', 'newHaikuInput')">Ajouter</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="glass-panel">
+                    <h2>📰 Flux RSS Actualités <button class="btn btn-outline btn-sm" onclick="triggerContent('news')">Lire un titre</button></h2>
+                    <ul id="newsFeedsList" class="item-list"></ul>
+                    <div class="input-group">
+                        <input type="text" id="newFeedName" placeholder="Nom (ex: Franceinfo)" style="max-width: 160px;">
+                        <input type="text" id="newFeedUrl" placeholder="URL du flux RSS...">
+                        <button class="btn btn-sm" onclick="addNewsFeed()">Ajouter</button>
+                    </div>
+                </div>
+
+                <div class="glass-panel">
+                    <h2>👽 Subreddits <button class="btn btn-outline btn-sm" onclick="triggerContent('reddit')">Lire un post</button></h2>
+                    <ul id="subredditsList" class="item-list"></ul>
+                    <div class="input-group">
+                        <input type="text" id="newSubInput" placeholder="Nom du sub (ex: france, science)">
+                        <button class="btn btn-sm" onclick="addListItem('subreddits', 'newSubInput')">Ajouter</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="two-col">
+                <div class="glass-panel">
+                    <h2>💬 Phrases spontanées</h2>
+                    <ul id="phrasesList" class="item-list"></ul>
+                    <div class="input-group">
+                        <input type="text" id="newPhraseInput" placeholder="Nouvelle phrase d'ambiance...">
+                        <button class="btn btn-sm" onclick="addListItem('phrases', 'newPhraseInput')">Ajouter</button>
+                    </div>
+                </div>
+
+                <div class="glass-panel">
+                    <h2>🌤️ Météo (Open-Meteo sans clé) <button class="btn btn-outline btn-sm" onclick="triggerContent('weather')">Tester</button></h2>
+                    <div class="input-group">
+                        <input type="text" id="weatherCity" placeholder="Ville (ex: Rouen)">
+                    </div>
+                    <div class="input-group">
+                        <input type="number" step="0.0001" id="weatherLat" placeholder="Latitude (ex: 49.4431)">
+                        <input type="number" step="0.0001" id="weatherLon" placeholder="Longitude (ex: 1.0993)">
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm" onclick="saveWeather()">Enregistrer</button>
+                        <button class="btn btn-outline btn-sm" onclick="setWeatherPreset('Paris', 48.8566, 2.3522)">Paris</button>
+                        <button class="btn btn-outline btn-sm" onclick="setWeatherPreset('Rouen', 49.4431, 1.0993)">Rouen</button>
+                        <button class="btn btn-outline btn-sm" onclick="setWeatherPreset('Lyon', 45.7640, 4.8357)">Lyon</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONGLET 3 : PLANNING & SIESTES -->
+        <div id="tab-planning" class="tab-pane">
+            <div class="two-col">
+                <div class="glass-panel">
+                    <h2>😴 Sieste & 🍅 Pomodoro</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0;">
+                        En sieste, Ohbot ferme les yeux, tamise ses LEDs, relâche ses moteurs et reste silencieux jusqu'au réveil.
+                    </p>
+                    <div class="action-buttons" style="margin-bottom: 1.5rem;">
+                        <button class="btn btn-outline" onclick="startNap(15)">😴 Sieste 15 min</button>
+                        <button class="btn btn-outline" onclick="startNap(30)">😴 Sieste 30 min</button>
+                        <button class="btn btn-outline" onclick="startNap(60)">😴 Sieste 1 h</button>
+                        <button class="btn btn-success" onclick="wakeRobot()">☀️ Réveiller</button>
+                    </div>
+                    <h3>🍅 Coach Pomodoro (Focus silencieux + Pause)</h3>
+                    <div class="input-group" style="align-items: center;">
+                        <label style="font-size: 0.9rem; color: var(--text-muted);">Focus (min)</label>
+                        <input type="number" id="pomoWork" value="25" min="1" max="120" style="max-width: 90px;">
+                        <label style="font-size: 0.9rem; color: var(--text-muted);">Pause (min)</label>
+                        <input type="number" id="pomoBreak" value="5" min="1" max="60" style="max-width: 90px;">
+                        <button class="btn btn-sm" onclick="startPomodoro()">Lancer Pomodoro</button>
+                    </div>
+                </div>
+
+                <div class="glass-panel">
+                    <h2>⏰ Planning Automatique (Allumé / Éteint)</h2>
+                    <label class="chip" style="margin-bottom: 1rem;">
+                        <input type="checkbox" id="scheduleEnabledCheck" onchange="saveSchedule()">
+                        Activer les horaires automatiques d'allumage / extinction
+                    </label>
+                    <div class="input-group" style="align-items: center;">
+                        <div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Réveil (Allumé)</div>
+                            <input type="time" id="wakeTimeInput" value="08:30" onchange="saveSchedule()">
+                        </div>
+                        <div>
+                            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">Coucher (Éteint)</div>
+                            <input type="time" id="sleepTimeInput" value="19:00" onchange="saveSchedule()">
+                        </div>
+                    </div>
+                    <h3>Jours actifs :</h3>
+                    <div class="chip-group" id="scheduleDaysGroup">
+                        <label class="chip"><input type="checkbox" value="0" onchange="saveSchedule()"> Lun</label>
+                        <label class="chip"><input type="checkbox" value="1" onchange="saveSchedule()"> Mar</label>
+                        <label class="chip"><input type="checkbox" value="2" onchange="saveSchedule()"> Mer</label>
+                        <label class="chip"><input type="checkbox" value="3" onchange="saveSchedule()"> Jeu</label>
+                        <label class="chip"><input type="checkbox" value="4" onchange="saveSchedule()"> Ven</label>
+                        <label class="chip"><input type="checkbox" value="5" onchange="saveSchedule()"> Sam</label>
+                        <label class="chip"><input type="checkbox" value="6" onchange="saveSchedule()"> Dim</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONGLET 4 : PILOTAGE MANUEL & CONFIG -->
+        <div id="tab-manuel" class="tab-pane">
+            <div class="glass-panel">
+                <h2>Synthèse Vocale Directe</h2>
+                <div class="input-group">
+                    <input type="text" id="speakText" placeholder="Entrez une phrase pour Ohbot..." value="Bonjour, tout fonctionne parfaitement !">
+                    <button class="btn" onclick="sayText()">Faire Parler</button>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h2>Couleur & Luminosité des Yeux (LED)</h2>
+                <div class="input-group" style="align-items: center;">
+                    <input type="color" id="eyeColorPicker" value="#3b82f6" onchange="applyEyePicker()" style="width: 56px; height: 42px; padding: 2px; border-radius: 8px; border: 1px solid var(--border); background: transparent; cursor: pointer; flex: 0 0 auto;">
+                    <button class="btn btn-outline btn-sm" onclick="setEyeColor(0, 0, 10)">Bleu</button>
+                    <button class="btn btn-outline btn-sm" onclick="setEyeColor(0, 10, 0)">Vert</button>
+                    <button class="btn btn-outline btn-sm" onclick="setEyeColor(10, 0, 0)">Rouge</button>
+                    <button class="btn btn-outline btn-sm" onclick="setEyeColor(8, 0, 10)">Violet</button>
+                    <button class="btn btn-outline btn-sm" onclick="setEyeColor(10, 10, 10)">Blanc</button>
+                    <button class="btn btn-danger btn-sm" onclick="setEyeColor(0, 0, 0)">Éteindre</button>
+                    <label style="display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-size: 0.88rem; margin-left: auto; cursor: pointer;">
+                        <input type="checkbox" id="swapRgCheckbox" checked onchange="applyCurrentEyeColor()">
+                        Inverser R/V
+                    </label>
+                </div>
+                <div class="slider-container">
+                    <div class="slider-header">
+                        <strong>Luminosité</strong>
+                        <span id="val-eye-brightness" style="color: var(--primary); font-weight: bold;">10</span>
+                    </div>
+                    <input type="range" id="eyeBrightnessSlider" min="0" max="10" value="10"
+                           oninput="document.getElementById('val-eye-brightness').textContent = this.value"
+                           onchange="applyCurrentEyeColor()">
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h2>
+                    <span>Contrôle Manuel des Moteurs</span>
+                    <div class="action-buttons">
+                        <button class="btn btn-outline btn-sm" onclick="resetRobot()">Position Neutre</button>
+                        <button class="btn btn-danger btn-sm" onclick="shutdownRobot()">Relâcher Moteurs</button>
+                    </div>
+                </h2>
+                <div id="motors-container" class="motors-grid">
+                    <p style="color: var(--text-muted)">Chargement...</p>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <h2>Éditeur Limites Moteurs (`config.json`)</h2>
+                <textarea id="configEditor" style="width: 100%; height: 220px; font-family: monospace; color: #a78bfa;"></textarea>
+                <button class="btn" style="margin-top: 0.85rem;" onclick="saveConfig()">Sauvegarder `config.json`</button>
+            </div>
         </div>
     </div>
 
@@ -254,91 +634,340 @@
 
     <script>
         const API_URL = window.location.origin;
+        let scenariosCfg = null;
+        let currentEyeColor = { r: 0, g: 0, b: 10 };
 
-        function showStatus(message, isError = false) {
-            const statusEl = document.getElementById('status');
-            statusEl.textContent = message;
-            statusEl.className = isError ? 'show error' : 'show';
-            setTimeout(() => statusEl.className = '', 3000);
+        function switchTab(name, btn) {
+            document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${name}`).classList.add('active');
+            btn.classList.add('active');
         }
 
-        async function sayText() {
-            const text = document.getElementById('speakText').value;
-            if (!text) return;
-            
+        function showStatus(message, isError = false) {
+            const el = document.getElementById('status');
+            el.textContent = message;
+            el.className = isError ? 'show error' : 'show';
+            setTimeout(() => el.className = '', 3000);
+        }
+
+        // --- Barre d'état live ---
+        async function pollStatus() {
             try {
-                const res = await fetch(`${API_URL}/say`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ text })
-                });
-                if (res.ok) {
-                    showStatus('Ohbot parle...');
+                const res = await fetch(`${API_URL}/status`);
+                if (!res.ok) return;
+                const data = await res.json();
+                const usbDot = document.getElementById('usbDot');
+                const usbText = document.getElementById('usbText');
+                if (data.usb_connected) {
+                    usbDot.className = 'dot';
+                    usbText.textContent = `USB OK (${data.port || 'connecté'})`;
                 } else {
-                    const data = await res.json();
-                    showStatus(data.detail || 'Erreur API', true);
+                    usbDot.className = 'dot off';
+                    usbText.textContent = 'USB déconnecté';
                 }
-            } catch (e) {
-                showStatus('Erreur de connexion à l\'API', true);
+
+                const sc = data.scenario || {};
+                const stateDot = document.getElementById('stateDot');
+                stateDot.className = (sc.state === 'napping' || sc.state === 'scheduled_sleep') ? 'dot sleep' : 'dot';
+                let act = sc.current_activity || sc.state || 'Prêt';
+                if (sc.nap_remaining_sec > 0) act += ` (${Math.ceil(sc.nap_remaining_sec / 60)} min restantes)`;
+                if (sc.pomodoro_remaining_sec > 0) act += ` (${Math.ceil(sc.pomodoro_remaining_sec / 60)} min restantes)`;
+                document.getElementById('activityText').textContent = act;
+                document.getElementById('lastSpokenText').textContent = sc.last_spoken ? `💬 « ${sc.last_spoken.slice(0, 75)}${sc.last_spoken.length > 75 ? '…' : ''} »` : '';
+            } catch (e) {}
+        }
+
+        async function reconnectUsb() {
+            const res = await fetch(`${API_URL}/reconnect`, { method: 'POST' });
+            if (res.ok) {
+                showStatus('Carte USB Ohbot reconnectée !');
+                pollStatus();
+            } else {
+                showStatus('Impossible de reconnecter le port USB', true);
             }
         }
 
-        async function moveMotor(motorId, position) {
+        // --- Scénarios & Contenus ---
+        async function loadScenarios() {
             try {
-                document.getElementById(`val-${motorId}`).textContent = position;
-                
-                const res = await fetch(`${API_URL}/move/${motorId}/${position}`, {
-                    method: 'POST'
-                });
-                
-                if (!res.ok) {
-                    const data = await res.json();
-                    showStatus(data.detail || 'Mouvement refusé', true);
-                }
+                const res = await fetch(`${API_URL}/scenarios`);
+                const data = await res.json();
+                scenariosCfg = data.config;
+                renderScenariosUI();
             } catch (e) {
                 console.error(e);
             }
         }
 
-        async function resetRobot() {
+        function renderScenariosUI() {
+            if (!scenariosCfg) return;
+            const auto = scenariosCfg.autonomous || {};
+            const btn = document.getElementById('toggleAutoBtn');
+            btn.textContent = auto.enabled ? 'Actif (Cliquer pour couper)' : 'En pause (Cliquer pour activer)';
+            btn.className = auto.enabled ? 'btn btn-success btn-sm' : 'btn btn-outline btn-sm';
+
+            document.getElementById('speakIntervalSlider').value = auto.speak_interval_sec || 60;
+            document.getElementById('val-speak-interval').textContent = auto.speak_interval_sec || 60;
+            document.getElementById('quietModeCheck').checked = !!auto.quiet_mode;
+            document.getElementById('hourlyChimeCheck').checked = !!auto.hourly_chime;
+
+            const enabledSet = new Set(auto.enabled_sources || []);
+            document.querySelectorAll('#enabledSourcesGroup input[type="checkbox"]').forEach(cb => {
+                cb.checked = enabledSet.has(cb.value);
+            });
+
+            renderSimpleList('jokes', 'jokesList');
+            renderSimpleList('haikus', 'haikusList');
+            renderSimpleList('phrases', 'phrasesList');
+            renderSimpleList('subreddits', 'subredditsList', 'r/');
+            renderNewsFeeds();
+
+            const w = scenariosCfg.weather || {};
+            document.getElementById('weatherCity').value = w.city || 'Paris';
+            document.getElementById('weatherLat').value = w.latitude ?? 48.8566;
+            document.getElementById('weatherLon').value = w.longitude ?? 2.3522;
+
+            const sched = scenariosCfg.schedule || {};
+            document.getElementById('scheduleEnabledCheck').checked = !!sched.enabled;
+            document.getElementById('wakeTimeInput').value = sched.wake_time || '08:30';
+            document.getElementById('sleepTimeInput').value = sched.sleep_time || '19:00';
+            const daySet = new Set(sched.days || []);
+            document.querySelectorAll('#scheduleDaysGroup input[type="checkbox"]').forEach(cb => {
+                cb.checked = daySet.has(parseInt(cb.value, 10));
+            });
+        }
+
+        function renderSimpleList(key, ulId, prefix = '') {
+            const ul = document.getElementById(ulId);
+            ul.innerHTML = '';
+            (scenariosCfg[key] || []).forEach((item, idx) => {
+                const li = document.createElement('li');
+                li.className = 'item-row';
+                const span = document.createElement('span');
+                span.textContent = prefix + item;
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn btn-danger btn-sm';
+                delBtn.textContent = '✕';
+                delBtn.onclick = () => removeListItem(key, idx);
+                li.appendChild(span);
+                li.appendChild(delBtn);
+                ul.appendChild(li);
+            });
+        }
+
+        function renderNewsFeeds() {
+            const ul = document.getElementById('newsFeedsList');
+            ul.innerHTML = '';
+            (scenariosCfg.news_feeds || []).forEach((feed, idx) => {
+                const li = document.createElement('li');
+                li.className = 'item-row';
+                const span = document.createElement('span');
+                span.innerHTML = `<strong>${feed.name}</strong> <span style="color:var(--text-muted);font-size:0.8rem;">(${feed.url})</span>`;
+                const delBtn = document.createElement('button');
+                delBtn.className = 'btn btn-danger btn-sm';
+                delBtn.textContent = '✕';
+                delBtn.onclick = () => {
+                    scenariosCfg.news_feeds.splice(idx, 1);
+                    pushScenarios('Flux supprimé');
+                };
+                li.appendChild(span);
+                li.appendChild(delBtn);
+                ul.appendChild(li);
+            });
+        }
+
+        async function pushScenarios(msg = 'Scénarios sauvegardés') {
             try {
-                const res = await fetch(`${API_URL}/reset`, { method: 'POST' });
+                const res = await fetch(`${API_URL}/scenarios`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(scenariosCfg)
+                });
                 if (res.ok) {
-                    showStatus('Robot réinitialisé');
-                    loadConfig(); // Recharge les valeurs des sliders au centre
+                    renderScenariosUI();
+                    showStatus(msg);
+                } else {
+                    showStatus('Erreur sauvegarde scénarios', true);
                 }
             } catch (e) {
-                showStatus('Erreur API', true);
+                showStatus('Erreur réseau', true);
             }
         }
 
-        async function shutdownRobot() {
-            if(confirm("Voulez-vous vraiment éteindre les moteurs ?")) {
-                try {
-                    const res = await fetch(`${API_URL}/shutdown`, { method: 'POST' });
-                    if (res.ok) showStatus('Moteurs désactivés');
-                } catch (e) {
-                    showStatus('Erreur API', true);
-                }
+        function toggleAutonomous() {
+            if (!scenariosCfg) return;
+            scenariosCfg.autonomous.enabled = !scenariosCfg.autonomous.enabled;
+            pushScenarios(scenariosCfg.autonomous.enabled ? 'Vie autonome activée' : 'Vie autonome en pause');
+        }
+
+        function saveScenarios() {
+            if (!scenariosCfg) return;
+            scenariosCfg.autonomous.speak_interval_sec = parseInt(document.getElementById('speakIntervalSlider').value, 10);
+            scenariosCfg.autonomous.quiet_mode = document.getElementById('quietModeCheck').checked;
+            scenariosCfg.autonomous.hourly_chime = document.getElementById('hourlyChimeCheck').checked;
+            scenariosCfg.autonomous.enabled_sources = Array.from(
+                document.querySelectorAll('#enabledSourcesGroup input[type="checkbox"]:checked')
+            ).map(cb => cb.value);
+            pushScenarios('Réglages autonomes mis à jour');
+        }
+
+        function addListItem(key, inputId) {
+            const input = document.getElementById(inputId);
+            const val = input.value.trim().replace(/^r\//, '');
+            if (!val || !scenariosCfg) return;
+            scenariosCfg[key] = scenariosCfg[key] || [];
+            scenariosCfg[key].push(val);
+            input.value = '';
+            pushScenarios('Élément ajouté !');
+        }
+
+        function removeListItem(key, idx) {
+            scenariosCfg[key].splice(idx, 1);
+            pushScenarios('Élément supprimé');
+        }
+
+        function addNewsFeed() {
+            const name = document.getElementById('newFeedName').value.trim();
+            const url = document.getElementById('newFeedUrl').value.trim();
+            if (!name || !url || !scenariosCfg) return;
+            scenariosCfg.news_feeds = scenariosCfg.news_feeds || [];
+            scenariosCfg.news_feeds.push({ name, url });
+            document.getElementById('newFeedName').value = '';
+            document.getElementById('newFeedUrl').value = '';
+            pushScenarios('Flux RSS ajouté !');
+        }
+
+        function setWeatherPreset(city, lat, lon) {
+            document.getElementById('weatherCity').value = city;
+            document.getElementById('weatherLat').value = lat;
+            document.getElementById('weatherLon').value = lon;
+            saveWeather();
+        }
+
+        function saveWeather() {
+            if (!scenariosCfg) return;
+            scenariosCfg.weather = {
+                city: document.getElementById('weatherCity').value.trim() || 'Paris',
+                latitude: parseFloat(document.getElementById('weatherLat').value) || 48.8566,
+                longitude: parseFloat(document.getElementById('weatherLon').value) || 2.3522
+            };
+            pushScenarios('Météo enregistrée !');
+        }
+
+        function saveSchedule() {
+            if (!scenariosCfg) return;
+            scenariosCfg.schedule = {
+                enabled: document.getElementById('scheduleEnabledCheck').checked,
+                wake_time: document.getElementById('wakeTimeInput').value || '08:30',
+                sleep_time: document.getElementById('sleepTimeInput').value || '19:00',
+                days: Array.from(document.querySelectorAll('#scheduleDaysGroup input:checked')).map(cb => parseInt(cb.value, 10))
+            };
+            pushScenarios('Planning enregistré !');
+        }
+
+        async function triggerAttitude(name) {
+            await fetch(`${API_URL}/scenarios/attitude/${name}`, { method: 'POST' });
+            showStatus(`Attitude « ${name} » envoyée`);
+            setTimeout(pollStatus, 400);
+        }
+
+        async function triggerContent(kind) {
+            await fetch(`${API_URL}/scenarios/trigger/${kind}`, { method: 'POST' });
+            showStatus(`Action « ${kind} » lancée`);
+            setTimeout(pollStatus, 600);
+        }
+
+        async function startNap(minutes) {
+            await fetch(`${API_URL}/scenarios/nap/${minutes}`, { method: 'POST' });
+            showStatus(`Sieste de ${minutes} min lancée`);
+            setTimeout(pollStatus, 400);
+        }
+
+        async function wakeRobot() {
+            await fetch(`${API_URL}/scenarios/wake`, { method: 'POST' });
+            showStatus('Réveil envoyé !');
+            setTimeout(pollStatus, 400);
+        }
+
+        async function startPomodoro() {
+            const work_min = parseInt(document.getElementById('pomoWork').value, 10) || 25;
+            const break_min = parseInt(document.getElementById('pomoBreak').value, 10) || 5;
+            await fetch(`${API_URL}/scenarios/pomodoro`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ work_min, break_min })
+            });
+            showStatus(`Pomodoro ${work_min} min lancé !`);
+            setTimeout(pollStatus, 400);
+        }
+
+        // --- Pilotage manuel existant ---
+        async function sayText() {
+            const text = document.getElementById('speakText').value;
+            if (!text) return;
+            showStatus('Ohbot parle...');
+            const res = await fetch(`${API_URL}/say`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text })
+            });
+            if (!res.ok) showStatus('Erreur synthèse vocale', true);
+            pollStatus();
+        }
+
+        async function setEyeColor(r, g, b) {
+            currentEyeColor = { r, g, b };
+            const brightness = parseInt(document.getElementById('eyeBrightnessSlider').value, 10);
+            const swapRg = document.getElementById('swapRgCheckbox').checked;
+            const res = await fetch(`${API_URL}/eyes/color`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ r, g, b, brightness, swap_rg: swapRg })
+            });
+            if (res.ok) showStatus(`Yeux LED : R=${r} V=${g} B=${b} (Lum: ${brightness}/10)`);
+        }
+
+        function applyCurrentEyeColor() {
+            setEyeColor(currentEyeColor.r, currentEyeColor.g, currentEyeColor.b);
+        }
+
+        function applyEyePicker() {
+            const hex = document.getElementById('eyeColorPicker').value;
+            const r = Math.round((parseInt(hex.slice(1, 3), 16) / 255) * 10);
+            const g = Math.round((parseInt(hex.slice(3, 5), 16) / 255) * 10);
+            const b = Math.round((parseInt(hex.slice(5, 7), 16) / 255) * 10);
+            setEyeColor(r, g, b);
+        }
+
+        async function moveMotor(motorId, position) {
+            document.getElementById(`val-${motorId}`).textContent = position;
+            const res = await fetch(`${API_URL}/move/${motorId}/${position}`, { method: 'POST' });
+            if (!res.ok) {
+                const data = await res.json();
+                showStatus(data.detail || 'Mouvement refusé', true);
             }
+        }
+
+        async function resetRobot() {
+            const res = await fetch(`${API_URL}/reset`, { method: 'POST' });
+            if (res.ok) { showStatus('Robot au neutre'); loadConfig(); }
+        }
+
+        async function shutdownRobot() {
+            const res = await fetch(`${API_URL}/shutdown`, { method: 'POST' });
+            if (res.ok) showStatus('Servomoteurs relâchés');
         }
 
         async function loadConfig() {
             try {
                 const res = await fetch(`${API_URL}/config`);
                 const config = await res.json();
-                
-                // Mettre à jour l'éditeur JSON
                 document.getElementById('configEditor').value = JSON.stringify(config, null, 2);
-
                 const container = document.getElementById('motors-container');
                 container.innerHTML = '';
-
-                const motors = config.motors;
-                for (const [id, info] of Object.entries(motors)) {
-                    // Calcul de la valeur par défaut (souvent 5, ou la moyenne)
+                for (const [id, info] of Object.entries(config.motors)) {
                     const centerVal = Math.round((info.max + info.min) / 2);
-                    
                     const div = document.createElement('div');
                     div.className = 'slider-container';
                     div.innerHTML = `
@@ -346,55 +975,37 @@
                             <strong>${info.name}</strong>
                             <span id="val-${id}" style="color: var(--primary); font-weight: bold;">${centerVal}</span>
                         </div>
-                        <input type="range" 
-                               min="${info.min}" 
-                               max="${info.max}" 
-                               value="${centerVal}" 
+                        <input type="range" min="${info.min}" max="${info.max}" value="${centerVal}"
                                oninput="document.getElementById('val-${id}').textContent = this.value"
                                onchange="moveMotor('${id}', this.value)">
-                        <div class="slider-header" style="margin-top: 8px; color: #64748b; font-size: 0.8rem;">
-                            <span>Min: ${info.min}</span>
-                            <span>Max: ${info.max}</span>
-                        </div>
-                    `;
+                        <div class="slider-header" style="margin-top: 6px; font-size: 0.78rem;">
+                            <span>Min: ${info.min}</span><span>Max: ${info.max}</span>
+                        </div>`;
                     container.appendChild(div);
                 }
-            } catch (e) {
-                document.getElementById('motors-container').innerHTML = 
-                    '<p style="color: #ef4444">Impossible de contacter l\'API. Assurez-vous que le serveur est lancé (uvicorn main:app).</p>';
-            }
+            } catch (e) {}
         }
 
         async function saveConfig() {
-            const rawText = document.getElementById('configEditor').value;
-            let newConfig;
             try {
-                newConfig = JSON.parse(rawText);
-            } catch (e) {
-                showStatus('Erreur: Le JSON est invalide', true);
-                return;
-            }
-
-            try {
+                const newConfig = JSON.parse(document.getElementById('configEditor').value);
                 const res = await fetch(`${API_URL}/config`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(newConfig)
                 });
-                
-                if (res.ok) {
-                    showStatus('Configuration sauvegardée avec succès !');
-                    loadConfig(); // Rafraîchit les sliders avec les nouvelles valeurs Min/Max
-                } else {
-                    const data = await res.json();
-                    showStatus(data.detail || 'Erreur API', true);
-                }
+                if (res.ok) { showStatus('Configuration sauvegardée !'); loadConfig(); }
             } catch (e) {
-                showStatus('Erreur de connexion à l\'API', true);
+                showStatus('JSON invalide', true);
             }
         }
 
-        document.addEventListener('DOMContentLoaded', loadConfig);
+        window.onload = () => {
+            loadConfig();
+            loadScenarios();
+            pollStatus();
+            setInterval(pollStatus, 3000);
+        };
     </script>
 </body>
 </html>
